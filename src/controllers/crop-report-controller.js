@@ -1,12 +1,25 @@
 const { StatusCodes } = require('http-status-codes');
 const successResponse = require('../utills/common/success-response');
 const cropReportService = require('../services/crop-report-service');
+const farmerService = require('../services/farmer-service');
 
 class CropReportController {
   async create(req, res) {
     try {
-      const { farmerId } = req.body;
-      const { cropName, cropType, areaHectares, plantingDate, expectedHarvestDate, description } = req.body;
+      let { farmerId } = req.body;
+      const { farmerExternalId, cropName, cropType, areaHectares, plantingDate, expectedHarvestDate, description } = req.body;
+
+      // If numeric farmerId not provided, try resolving from external string id (farmerId code)
+      if ((!farmerId || Number.isNaN(Number(farmerId))) && farmerExternalId) {
+        try {
+          const farmer = await farmerService.getFarmerByFarmerId(farmerExternalId);
+          if (farmer && farmer.id) {
+            farmerId = farmer.id;
+          }
+        } catch (e) {
+          // ignore and fall through to validation
+        }
+      }
 
       if (!farmerId || !cropName) {
         return res.status(StatusCodes.BAD_REQUEST).json({
