@@ -151,7 +151,7 @@ async function notifyAdminsNewQuery(queryId) {
           <p style="white-space:pre-wrap">${escapeHtml(item.description) || 'No description provided'}</p>
         </div>
         <div style="text-align:center;margin:30px 0">
-          <a href="/admin/former-query/${item.id}" style="background:#3498db;color:white;padding:12px 24px;text-decoration:none;border-radius:5px;display:inline-block">Open in Admin Panel</a>
+          <a href="/admin/farmer-query/${item.id}" style="background:#3498db;color:white;padding:12px 24px;text-decoration:none;border-radius:5px;display:inline-block">Open in Admin Panel</a>
         </div>
         <hr style="border:none;border-top:1px solid #eee;margin:30px 0">
         <p style="color:#7f8c8d;font-size:12px;text-align:center">This is an automated notification from Sahaja Krushi System</p>
