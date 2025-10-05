@@ -20,8 +20,8 @@ router.post('/login', validateFarmerLogin, farmerController.loginFarmer);
 // Protected routes (authentication required)
 router.get('/stats', maybeAuth, farmerController.getFarmerStats);
 router.get('/', maybeAuth, farmerController.getAllFarmers);
-// Place more specific route before generic id route
-router.get('/farmer-id/:farmerId', maybeAuth, farmerController.getFarmerByFarmerId);
+// Public lookup by external farmerId (needed for mobile create flow)
+router.get('/farmer-id/:farmerId', farmerController.getFarmerByFarmerId);
 router.get('/:id', maybeAuth, farmerController.getFarmerById);
 router.put('/:id', maybeAuth, farmerController.updateFarmer);
 router.delete('/:id', maybeAuth, farmerController.deleteFarmer);
