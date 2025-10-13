@@ -124,8 +124,18 @@ class FarmerController {
 
   async loginFarmer(req, res) {
     try {
-      const { contactNumber, dateOfBirth } = req.body;
-      const farmer = await farmerService.loginFarmerWithDob(contactNumber, dateOfBirth);
+      const { contactNumber, dateOfBirth, otpVerified, firebaseUid } = req.body;
+      
+      let farmer;
+      if (otpVerified && firebaseUid) {
+        // OTP-based login
+        farmer = await farmerService.loginFarmerWithOtp(contactNumber, firebaseUid);
+      } else if (dateOfBirth) {
+        // Legacy DOB-based login (for backward compatibility)
+        farmer = await farmerService.loginFarmerWithDob(contactNumber, dateOfBirth);
+      } else {
+        throw new AppError('Either OTP verification or date of birth is required', StatusCodes.BAD_REQUEST);
+      }
       
       return res.status(StatusCodes.OK).json(
         successResponse('Farmer logged in successfully', {

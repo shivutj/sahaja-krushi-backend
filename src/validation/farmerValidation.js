@@ -35,15 +35,27 @@ const farmerRegistrationSchema = Joi.object({
   insuranceScheme: Joi.string().allow('', null).optional()
 });
 
-const farmerLoginSchema = Joi.object({
-  contactNumber: Joi.string().pattern(/^[6-9]\d{9}$/).required().messages({
-    'string.pattern.base': 'Please enter a valid 10-digit mobile number'
+// Login supports either DOB or OTP (firebase)
+const farmerLoginSchema = Joi.alternatives().try(
+  // Path 1: DOB-based login (legacy)
+  Joi.object({
+    contactNumber: Joi.string().pattern(/^[6-9]\d{9}$/).required().messages({
+      'string.pattern.base': 'Please enter a valid 10-digit mobile number'
+    }),
+    dateOfBirth: Joi.date().max('now').required().messages({
+      'date.base': 'Please enter a valid date',
+      'date.max': 'Date of birth cannot be in the future'
+    })
   }),
-  dateOfBirth: Joi.date().max('now').required().messages({
-    'date.base': 'Please enter a valid date',
-    'date.max': 'Date of birth cannot be in the future'
+  // Path 2: OTP-based login
+  Joi.object({
+    contactNumber: Joi.string().pattern(/^[6-9]\d{9}$/).required().messages({
+      'string.pattern.base': 'Please enter a valid 10-digit mobile number'
+    }),
+    otpVerified: Joi.boolean().valid(true).required(),
+    firebaseUid: Joi.string().min(10).required()
   })
-});
+);
 
 const sendOtpSchema = Joi.object({
   contactNumber: Joi.string().pattern(/^[6-9]\d{9}$/).required().messages({

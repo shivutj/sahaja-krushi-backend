@@ -258,6 +258,33 @@ class FarmerService {
     }
   }
 
+  // New login with OTP verification
+  async loginFarmerWithOtp(contactNumber, firebaseUid) {
+    try {
+      const farmer = await farmerRepository.findByContactNumber(contactNumber);
+      if (!farmer) {
+        throw new AppError('Farmer not found with this contact number', StatusCodes.NOT_FOUND);
+      }
+
+      if (!farmer.isActive) {
+        throw new AppError('Farmer account is deactivated', StatusCodes.FORBIDDEN);
+      }
+
+      // For OTP-based login, we trust Firebase's verification
+      // The firebaseUid can be stored for future reference if needed
+      
+      // Update last login
+      await farmerRepository.updateLastLogin(farmer.id);
+
+      return farmer;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Failed to login farmer with OTP', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  }
+
   async sendOtp(contactNumber) {
     try {
       const farmer = await farmerRepository.findByContactNumber(contactNumber);
