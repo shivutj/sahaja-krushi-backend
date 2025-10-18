@@ -1,6 +1,7 @@
 const farmerService = require('../services/farmer-service');
 const successResponse = require('../utills/common/success-response');
 const { StatusCodes } = require('http-status-codes');
+const AppError = require('../utills/common/app-error');
 
 class FarmerController {
   async registerFarmer(req, res) {
@@ -124,17 +125,20 @@ class FarmerController {
 
   async loginFarmer(req, res) {
     try {
-      const { contactNumber, dateOfBirth, otpVerified, firebaseUid } = req.body;
+      const { contactNumber, dateOfBirth, otpVerified, firebaseUid, username } = req.body;
       
       let farmer;
       if (otpVerified && firebaseUid) {
         // OTP-based login
         farmer = await farmerService.loginFarmerWithOtp(contactNumber, firebaseUid);
+      } else if (username) {
+        // Username-based login
+        farmer = await farmerService.loginFarmerWithUsername(contactNumber, username);
       } else if (dateOfBirth) {
         // Legacy DOB-based login (for backward compatibility)
         farmer = await farmerService.loginFarmerWithDob(contactNumber, dateOfBirth);
       } else {
-        throw new AppError('Either OTP verification or date of birth is required', StatusCodes.BAD_REQUEST);
+        throw new AppError('Either username, OTP verification, or date of birth is required', StatusCodes.BAD_REQUEST);
       }
       
       return res.status(StatusCodes.OK).json(

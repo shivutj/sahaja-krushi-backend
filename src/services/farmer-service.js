@@ -285,6 +285,52 @@ class FarmerService {
     }
   }
 
+  // Username-based login
+  async loginFarmerWithUsername(contactNumber, username) {
+    try {
+      const farmer = await farmerRepository.findByContactNumber(contactNumber);
+      if (!farmer) {
+        throw new AppError('Farmer not found with this contact number', StatusCodes.NOT_FOUND);
+      }
+
+      if (!farmer.isActive) {
+        throw new AppError('Farmer account is deactivated', StatusCodes.FORBIDDEN);
+      }
+
+      // Generate expected username from farmer's name and DOB
+      const expectedUsername = this.generateUsername(farmer.fullName, farmer.dateOfBirth);
+      
+      if (username.toUpperCase() !== expectedUsername.toUpperCase()) {
+        throw new AppError('Invalid username. Please check your credentials.', StatusCodes.UNAUTHORIZED);
+      }
+
+      // Update last login
+      await farmerRepository.updateLastLogin(farmer.id);
+
+      return farmer;
+    } catch (error) {
+      if (error instanceof AppError) {
+        throw error;
+      }
+      throw new AppError('Failed to login farmer with username', StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  }
+
+  // Generate username from farmer's name and date of birth
+  generateUsername(fullName, dateOfBirth) {
+    if (!fullName || !dateOfBirth) {
+      return null;
+    }
+
+    // Extract first 4 characters of name (uppercase)
+    const namePart = fullName.replace(/\s+/g, '').substring(0, 4).toUpperCase();
+    
+    // Extract year from date of birth
+    const year = new Date(dateOfBirth).getFullYear();
+    
+    return `${namePart}${year}`;
+  }
+
   async sendOtp(contactNumber) {
     try {
       const farmer = await farmerRepository.findByContactNumber(contactNumber);

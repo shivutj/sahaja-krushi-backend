@@ -35,7 +35,7 @@ const farmerRegistrationSchema = Joi.object({
   insuranceScheme: Joi.string().allow('', null).optional()
 });
 
-// Login supports either DOB or OTP (firebase)
+// Login supports DOB, OTP (firebase), or Username
 const farmerLoginSchema = Joi.alternatives().try(
   // Path 1: DOB-based login (legacy)
   Joi.object({
@@ -54,6 +54,16 @@ const farmerLoginSchema = Joi.alternatives().try(
     }),
     otpVerified: Joi.boolean().valid(true).required(),
     firebaseUid: Joi.string().min(10).required()
+  }),
+  // Path 3: Username-based login
+  Joi.object({
+    contactNumber: Joi.string().pattern(/^[6-9]\d{9}$/).required().messages({
+      'string.pattern.base': 'Please enter a valid 10-digit mobile number'
+    }),
+    username: Joi.string().min(4).max(20).required().messages({
+      'string.min': 'Username must be at least 4 characters',
+      'string.max': 'Username must not exceed 20 characters'
+    })
   })
 );
 
