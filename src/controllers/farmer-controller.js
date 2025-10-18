@@ -1,7 +1,7 @@
 const farmerService = require('../services/farmer-service');
 const successResponse = require('../utills/common/success-response');
 const { StatusCodes } = require('http-status-codes');
-const AppError = require('../utills/common/app-error');
+const { AppError } = require('../utills/app-error');
 
 class FarmerController {
   async registerFarmer(req, res) {
