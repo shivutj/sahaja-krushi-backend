@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { NewsRepository } = require('../repositories');
-const AppError = require('../utills/app-error');
+const { AppError } = require('../utills/app-error');
 
 const newsRepository = new NewsRepository();
 

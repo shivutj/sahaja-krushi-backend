@@ -1,6 +1,6 @@
 const { StatusCodes } = require('http-status-codes');
 const { CropReport, CropStage, CropStagePhoto, Farmer } = require('../models');
-const AppError = require('../utills/app-error');
+const { AppError } = require('../utills/app-error');
 
 // Predefined crop stages in Kannada
 const PREDEFINED_STAGES = [

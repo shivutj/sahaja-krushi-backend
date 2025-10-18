@@ -1,5 +1,5 @@
 const { createUserSchema, updateUserSchema } = require('../validation/userValidation');
-const AppError = require('../utills/app-error');
+const { AppError } = require('../utills/app-error');
 
 const validateCreateUser = (req, res, next) => {
   const { error } = createUserSchema.validate(req.body, { abortEarly: false });

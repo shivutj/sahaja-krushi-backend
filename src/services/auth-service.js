@@ -1,6 +1,6 @@
 const userRepository = require('../repositories/user-repository');
 const { generateToken } = require('../utils/jwt');
-const AppError = require('../utills/app-error');
+const { AppError } = require('../utills/app-error');
 
 class AuthService {
   async login(email, password) {
