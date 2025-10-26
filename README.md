@@ -375,9 +375,6 @@ See `DEPLOYMENT_GUIDE.md` for detailed deployment instructions.
 
 ISC
 
-## Author
-
-Prajwal D R
 
 ## Support
 
